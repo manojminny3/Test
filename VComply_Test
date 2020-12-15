@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+long long convert(string s){
+	long long val=0;
+	int day=stoi(s.substr(0,2)), month=stoi(s.substr(3,2)), year=stoi(s.substr(6,4));
+	// cout << day <<" - " << month <<" - " << year<<endl;
+	val += day*24 + month*24*30 + year*24*365;
+	return val;
+}
+
+bool func(vector<unordered_map<string,string> > &vec, unordered_map<string, string> query){
+	int n = vec.size();
+	vector<bool> res(n);
+
+	vector<pair<long long, long long> > time(n);
+	for(int i=0; i<n; i++){
+		string start = vec[i]["leaveFrom"];
+		string end = vec[i]["leaveUpto"];
+		long long s = convert(start);
+		long long e = convert(end);
+		time[i].first = s;
+		time[i].second = e;
+	}
+
+	string start = query["leaveFrom"], end = query["leaveUpto"];
+	long long s = convert(start), e = convert(end);
+	// cout << s <<" "<<e<<endl;
+	for(int i=0; i<n-1; i++){
+		if(s > time[i].second and e<time[i+1].first) {
+			// cout << i << "- " << time[i].second <<" "<<time[i+1].first<<endl;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int main(){
+	vector<unordered_map<string, string> > vec(5);
+	vec[0]["emp_id"] = "1"; vec[0]["leaveFrom"] = "14-12-2020"; vec[0]["leaveUpto"] = "18-12-2020";
+	vec[1]["emp_id"] = "2"; vec[1]["leaveFrom"] = "22-12-2020"; vec[1]["leaveUpto"] = "24-12-2020";
+	vec[2]["emp_id"] = "3"; vec[2]["leaveFrom"] = "27-12-2020"; vec[2]["leaveUpto"] = "30-12-2020";
+	vec[3]["emp_id"] = "4"; vec[3]["leaveFrom"] = "02-12-2020"; vec[3]["leaveUpto"] = "10-12-2020";
+	vec[4]["emp_id"] = "5"; vec[4]["leaveFrom"] = "24-02-2021"; vec[4]["leaveUpto"] = "17-03-2021";
+	unordered_map<string, string> query;
+	query["emp_id"] = "6"; query["leaveFrom"] = "19-12-2020"; query["leaveUpto"] = "20-12-2020";
+	bool res = func(vec, query);
+	cout << res << endl;
+	return 0;
+}
